@@ -67,6 +67,7 @@ faiss-cpu
 pickle
 numpy
 sentence-transformers
+keras-tf
 ```
 
 ## Node.js Dependencies (package.json)
