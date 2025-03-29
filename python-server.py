@@ -69,14 +69,17 @@ def generate_answer():
     # Format conversation history (last 5 Q&A)
     history_text = "\n".join([f"Q: {item['question']}\nA: {item['answer']}" for item in history[-5:]])
 
-    prompt = f"""Answer the user's question using the retrieved Quranic context. If the user asks a follow-up question, use both the retrieved context and the previous conversation history to provide a helpful response. Your answer should be relevant, clear, and aligned with the Quranic teachings.  
+    
+    prompt2 = f"""Answer the user's question using the retrieved Quranic context and the previous conversation history. Determine if the user's question is a follow-up question. If it is (e.g., if it contains phrases like "explain in detail", "elaborate", "I don't understand", "in simple words", etc.), then base your answer on the previous answer in the conversation history, expanding or clarifying that response. If the question introduces a new topic that is not clearly a follow-up, then use the retrieved Quranic context to answer.
 
-- If the Quranic context contains relevant information, use it to answer thoughtfully.  
-- If the Quranic context does not mention the topic, respond with:  
-  "No information related to this could be found in the Quran."  
-- Do not speculate, provide personal opinions, or go beyond the given references.  
-- Ensure the response remains respectful, avoiding controversial or offensive statements.  
-- Provide the answer once in English and once in Arabic.  
+Guidelines:
+- If the Quranic context contains relevant information, use it to answer thoughtfully.
+- For follow-up questions, use both the previous conversation history (especially the last answer) and the Quranic context to provide additional details.
+- If neither the Quranic context nor the conversation history provide sufficient information, respond with:
+  "No information related to this could be found in the Quran."
+- Do not speculate, provide personal opinions, or go beyond the given references.
+- Ensure the response remains respectful, avoiding controversial or offensive statements.
+- Provide the answer once in English and once in Arabic.
 
 **Previous Conversation History:**  
 {history_text}  
@@ -84,7 +87,8 @@ def generate_answer():
 **Quranic Context:**  
 {context}  
 
-**Question:** {question}  
+**User's Question:**  
+{question}  
 
 **Answer:**  
 **English:**  
@@ -93,9 +97,10 @@ def generate_answer():
 """
 
 
+
     # Use Gemini (Default)
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
+    model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+    response = model.generate_content(prompt2)
     answer = response.text
 
      # Option 2: Use OpenAI GPT-4o mini 
